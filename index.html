@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Merry Christmas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@400;700&family=Noto+Serif+SC:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        background-color: #3a0a0a;
+        font-family: 'Noto Serif SC', serif;
+      }
+      .font-christmas {
+        font-family: 'Mountains of Christmas', cursive;
+      }
+      /* Custom scrollbar */
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 4px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #d4af37;
+        border-radius: 2px;
+      }
+
+      /* Snow Animation */
+      .snow-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 100;
+        overflow: hidden;
+      }
+      .snowflake {
+        position: absolute;
+        top: -10px;
+        background: white;
+        border-radius: 50%;
+        opacity: 0.8;
+        animation: fall linear infinite;
+      }
+      /* Generate random snowflakes via CSS nth-child loop simulation (simplified for static CSS) */
+      .snowflake:nth-child(1) { left: 10%; width: 5px; height: 5px; animation-duration: 10s; animation-delay: 0s; }
+      .snowflake:nth-child(2) { left: 20%; width: 3px; height: 3px; animation-duration: 12s; animation-delay: 2s; }
+      .snowflake:nth-child(3) { left: 30%; width: 7px; height: 7px; animation-duration: 8s; animation-delay: 1s; }
+      .snowflake:nth-child(4) { left: 40%; width: 4px; height: 4px; animation-duration: 15s; animation-delay: 0s; }
+      .snowflake:nth-child(5) { left: 50%; width: 6px; height: 6px; animation-duration: 11s; animation-delay: 3s; }
+      .snowflake:nth-child(6) { left: 60%; width: 3px; height: 3px; animation-duration: 13s; animation-delay: 1s; }
+      .snowflake:nth-child(7) { left: 70%; width: 5px; height: 5px; animation-duration: 9s; animation-delay: 2s; }
+      .snowflake:nth-child(8) { left: 80%; width: 4px; height: 4px; animation-duration: 14s; animation-delay: 0s; }
+      .snowflake:nth-child(9) { left: 90%; width: 6px; height: 6px; animation-duration: 10s; animation-delay: 4s; }
+      .snowflake:nth-child(10) { left: 25%; width: 4px; height: 4px; animation-duration: 11s; animation-delay: 5s; }
+      /* ... more flakes implied by repeated classes in React mapping, 
+         but we need randomness. We will rely on inline styles or SCSS, 
+         but for plain CSS here, we add a general rule and some randomness. 
+      */
+      
+      @keyframes fall {
+        0% { transform: translateY(-10vh) translateX(0); opacity: 0.8; }
+        100% { transform: translateY(110vh) translateX(20px); opacity: 0.3; }
+      }
+      
+      /* Applying randomness to elements created in React loop via :nth-child would be tedious in pure CSS 
+         without a preprocessor loop. 
+         We will use a simpler approach: define a few variations and let the React loop reuse them, 
+         or just let them fall uniformly which is okay for MVP, 
+         BUT to make it nice, we'll use a small trick in App.tsx to randomise styles.
+         So here just the keyframes.
+      */
+
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "@react-three/fiber": "https://aistudiocdn.com/@react-three/fiber@^9.4.2",
+    "react/": "https://aistudiocdn.com/react@^19.2.1/",
+    "react": "https://aistudiocdn.com/react@^19.2.1",
+    "three": "https://aistudiocdn.com/three@^0.181.2",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.556.0",
+    "@react-three/drei": "https://aistudiocdn.com/@react-three/drei@^10.7.7",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+    <script>
+      // Quick script to add random styles to snowflakes if rendered by React
+      // Actually handled better if we just add style tags in React map.
+    </script>
+  </body>
+</html>
