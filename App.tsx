@@ -124,7 +124,7 @@ function App() {
       
       {/* Footer */}
       <footer className="absolute bottom-2 w-full text-center text-white/30 text-xs z-20 font-serif">
-        Designed with ❤️ for Christmas
+        Designed with ❤️ for Christmas | © Leo Wang
       </footer>
     </div>
   );
