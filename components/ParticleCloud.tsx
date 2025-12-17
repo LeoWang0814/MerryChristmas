@@ -34,16 +34,11 @@ const ParticleCloud: React.FC<ParticleCloudProps> = ({ shapeType }) => {
     if (!pointsRef.current) return;
     
     // Smooth interpolation speed
-    // Increase speed slightly for snappier transitions
     const speed = 3.0 * delta;
     
     const geometry = pointsRef.current.geometry;
-    
-    // Update Positions
     const positionAttribute = geometry.attributes.position;
     const positions = positionAttribute.array as Float32Array;
-    
-    // Update Colors
     const colorAttribute = geometry.attributes.color;
     const colors = colorAttribute.array as Float32Array;
 
@@ -52,11 +47,10 @@ const ParticleCloud: React.FC<ParticleCloudProps> = ({ shapeType }) => {
 
     let needsUpdate = false;
 
-    // Safety check
     if (positions.length !== targetPos.length) return;
 
     for (let i = 0; i < positions.length; i++) {
-      // --- Position Interpolation ---
+      // Position Interpolation
       const diff = targetPos[i] - positions[i];
       if (Math.abs(diff) > 0.001) {
           positions[i] += diff * speed;
@@ -65,7 +59,7 @@ const ParticleCloud: React.FC<ParticleCloudProps> = ({ shapeType }) => {
           positions[i] = targetPos[i];
       }
 
-      // --- Color Interpolation ---
+      // Color Interpolation
       const colDiff = targetCol[i] - colors[i];
       if (Math.abs(colDiff) > 0.01) {
           colors[i] += colDiff * speed;
@@ -75,8 +69,8 @@ const ParticleCloud: React.FC<ParticleCloudProps> = ({ shapeType }) => {
       }
     }
     
-    // Rotate the whole cloud slowly for 3D effect
-    pointsRef.current.rotation.y = state.clock.elapsedTime * 0.15;
+    // Gentle rotation
+    pointsRef.current.rotation.y = state.clock.elapsedTime * 0.12;
     
     if (needsUpdate) {
         positionAttribute.needsUpdate = true;
@@ -85,14 +79,18 @@ const ParticleCloud: React.FC<ParticleCloudProps> = ({ shapeType }) => {
   });
 
   return (
+    // @ts-ignore
     <points ref={pointsRef} frustumCulled={false}>
+      {/* @ts-ignore */}
       <bufferGeometry>
+        {/* @ts-ignore */}
         <bufferAttribute
           attach="attributes-position"
           count={currentPositions.length / 3}
           array={currentPositions}
           itemSize={3}
         />
+        {/* @ts-ignore */}
         <bufferAttribute
           attach="attributes-color"
           count={currentColors.length / 3}
@@ -100,11 +98,12 @@ const ParticleCloud: React.FC<ParticleCloudProps> = ({ shapeType }) => {
           itemSize={3}
         />
       </bufferGeometry>
+      {/* @ts-ignore */}
       <pointsMaterial
-        size={0.14} // Slightly larger for better cloud merging
+        size={0.16} // Increased from 0.14 for fuller look
         vertexColors
         transparent
-        opacity={0.9}
+        opacity={0.95} // Higher opacity
         sizeAttenuation={true}
         blending={THREE.AdditiveBlending}
         depthWrite={false}

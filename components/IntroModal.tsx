@@ -13,56 +13,88 @@ const IntroModal: React.FC<IntroModalProps> = ({ onComplete }) => {
     e.preventDefault();
     if (name.trim()) {
       setIsFading(true);
-      // Trigger callback immediately to satisfy browser autoplay policies
-      onComplete(name); 
+      setTimeout(() => onComplete(name), 600); // Wait for fade out
     }
   };
 
-  // If fading, we still render but with 0 opacity to allow the exit animation visual if handled by parent or CSS
-  // But here we rely on the parent (App) to mount/unmount or the modal to self-destruct via the callback state
-  if (isFading && !name) return null; // Logic handled by parent state mostly
+  if (isFading && !name) return null; 
 
   return (
-    <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md transition-opacity duration-700 ${isFading ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
-      <div className="relative w-full max-w-md p-8 m-4 bg-[#fdfbf7] rounded-xl shadow-[0_0_50px_rgba(212,175,55,0.4)] border-4 border-[#c41e3a] text-center transform transition-all animate-fade-in-up overflow-hidden">
+    <div className={`
+        fixed inset-0 z-50 
+        flex items-center justify-center 
+        bg-black/60 backdrop-blur-lg 
+        transition-all duration-700 ease-out
+        px-4
+        ${isFading ? 'opacity-0 scale-105 pointer-events-none' : 'opacity-100 scale-100'}
+    `}>
+      <div className="
+        relative w-full max-w-[360px] sm:max-w-[420px] 
+        p-8 sm:p-10 
+        bg-[#fffcf5] 
+        rounded-2xl 
+        shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] 
+        border border-[#eaddcf]
+        text-center 
+        transform transition-transform
+      ">
         
-        {/* Decorative ribbons */}
-        <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-[#d4af37] to-transparent opacity-20"></div>
-        <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-[#d4af37] to-transparent opacity-20"></div>
+        {/* Subtle texture */}
+        <div className="absolute inset-0 opacity-40 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/cream-paper.png')] mix-blend-multiply rounded-2xl"></div>
 
-        <div className="flex justify-center mb-6 text-[#c41e3a]">
-          <Gift size={56} className="animate-bounce" />
+        {/* Golden Border Frame */}
+        <div className="absolute inset-3 border border-[#d4af37] opacity-30 rounded-xl pointer-events-none"></div>
+        <div className="absolute inset-3.5 border border-[#d4af37] opacity-20 rounded-xl pointer-events-none"></div>
+
+        <div className="relative z-10 flex flex-col items-center">
+            <div className="mb-6 text-[#c41e3a] bg-red-50 p-4 rounded-full ring-1 ring-red-100 shadow-inner">
+              <Gift size={40} className="animate-bounce sm:w-12 sm:h-12" strokeWidth={1.5} />
+            </div>
+            
+            <h2 className="text-4xl sm:text-5xl font-christmas text-[#c41e3a] mb-3 font-bold drop-shadow-sm">
+              Merry Christmas
+            </h2>
+            <p className="text-[#7d6e64] mb-8 font-serif italic text-base sm:text-lg">
+              A magical holiday greeting awaits...
+            </p>
+            
+            <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4">
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter your name"
+                className="
+                    w-full px-4 py-3 sm:py-4 
+                    text-lg text-center text-[#2a0a0a] 
+                    bg-white border border-[#d6d3d1] rounded-lg 
+                    focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37] 
+                    shadow-sm placeholder:text-gray-400 placeholder:italic
+                    font-serif transition-all
+                "
+                autoFocus
+              />
+              <button
+                type="submit"
+                disabled={!name.trim()}
+                className="
+                    group w-full relative overflow-hidden
+                    px-6 py-3 sm:py-4 
+                    bg-[#c41e3a] text-[#fffcf5] 
+                    font-bold text-lg tracking-wide rounded-lg 
+                    shadow-md hover:shadow-lg hover:bg-[#a01830] hover:-translate-y-0.5
+                    transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none
+                "
+              >
+                <span className="relative z-10 flex items-center justify-center gap-2">
+                  Open Card
+                  <Sparkles size={18} className="group-hover:rotate-180 transition-transform duration-700" />
+                </span>
+                {/* Shine effect */}
+                <div className="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent to-white opacity-20 group-hover:animate-shine" />
+              </button>
+            </form>
         </div>
-        
-        <h2 className="text-4xl font-christmas text-[#c41e3a] mb-3 font-bold drop-shadow-sm">
-          Merry Christmas
-        </h2>
-        <p className="text-[#5a4a42] mb-8 font-serif italic text-lg">
-          To unlock your holiday surprise,<br/>please enter your name.
-        </p>
-        
-        <form onSubmit={handleSubmit} className="flex flex-col gap-5 relative z-10">
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Your Name..."
-            className="px-4 py-4 text-xl text-center text-gray-900 border-2 border-[#d4af37]/50 rounded-lg focus:outline-none focus:border-[#c41e3a] focus:ring-2 focus:ring-[#c41e3a]/20 bg-white shadow-inner font-serif placeholder:text-gray-400 transition-all"
-            autoFocus
-          />
-          <button
-            type="submit"
-            disabled={!name.trim()}
-            className="group relative px-6 py-4 bg-[#c41e3a] text-[#fdfbf7] font-bold text-lg rounded-lg shadow-lg hover:bg-[#a01830] hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden"
-          >
-            <span className="relative z-10 flex items-center justify-center gap-2">
-              Open Card
-              <Sparkles size={20} className="group-hover:rotate-45 transition-transform duration-500" />
-            </span>
-            {/* Button Shine Effect */}
-            <div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent z-0"></div>
-          </button>
-        </form>
       </div>
     </div>
   );

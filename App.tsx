@@ -4,18 +4,15 @@ import { OrbitControls, Stars, Sparkles as ThreeSparkles } from '@react-three/dr
 import IntroModal from './components/IntroModal';
 import CardStack from './components/CardStack';
 import ParticleCloud from './components/ParticleCloud';
-import MusicPlayer from './components/MusicPlayer';
 import { INITIAL_CARDS } from './constants';
 import { CardContent } from './types';
 
 function App() {
   const [name, setName] = useState<string | null>(null);
   const [cards, setCards] = useState<CardContent[]>(INITIAL_CARDS);
-  const [shouldPlayMusic, setShouldPlayMusic] = useState(false);
 
   const handleNameSubmit = (enteredName: string) => {
     setName(enteredName);
-    setShouldPlayMusic(true);
   };
 
   const handleNextCard = () => {
@@ -30,100 +27,112 @@ function App() {
   const activeShape = cards[0].shape;
 
   return (
-    <div className="relative w-full h-screen bg-[#3a0a0a] text-[#f8f5e6] overflow-hidden flex flex-col font-serif selection:bg-[#d4af37] selection:text-white">
+    // ROOT: Uniform Background Color (#3a0a0a), No Scrolling
+    <div className="relative w-full h-[100dvh] bg-[#3a0a0a] text-[#f8f5e6] overflow-hidden flex flex-col font-serif select-none">
       
-      {/* Snow Effect Layer with Randomized Styles */}
-      <div className="snow-container absolute inset-0 pointer-events-none z-30 opacity-60">
-        {[...Array(50)].map((_, i) => {
-           const left = Math.random() * 100;
-           const animDuration = 10 + Math.random() * 10;
-           const delay = Math.random() * 10;
-           const size = 2 + Math.random() * 4;
-           return (
-             <div 
-                key={i} 
-                className="snowflake"
-                style={{
-                    left: `${left}%`,
-                    width: `${size}px`,
-                    height: `${size}px`,
-                    animationDuration: `${animDuration}s`,
-                    animationDelay: `-${delay}s`
-                }}
-             ></div>
-           );
-        })}
+      {/* 1. Snow Layer (Global) */}
+      <div className="snow-container absolute inset-0 pointer-events-none z-20">
+        {[...Array(30)].map((_, i) => (
+           <div 
+              key={i} 
+              className="snowflake"
+              style={{
+                  left: `${Math.random() * 100}%`,
+                  width: `${2 + Math.random() * 3}px`,
+                  height: `${2 + Math.random() * 3}px`,
+                  animationDuration: `${15 + Math.random() * 20}s`,
+                  animationDelay: `-${Math.random() * 10}s`
+              }}
+           />
+        ))}
       </div>
 
-      {/* Background Ambience */}
-      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_50%_120%,_#7a1d1d_0%,_#2a0202_70%,_#000000_100%)] z-0" />
-      <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-30 z-0"></div>
+      {/* 2. Texture Layer */}
+      <div className="fixed inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-10 z-0 pointer-events-none mix-blend-overlay"></div>
 
-      {/* Header */}
-      <header className="relative z-20 w-full text-center py-4 md:py-8 select-none">
-        <h1 className="font-christmas text-5xl md:text-7xl text-[#d4af37] drop-shadow-[0_4px_8px_rgba(0,0,0,0.6)] animate-pulse tracking-wider">
+      {/* 3. Header - Adjusted padding to be tighter */}
+      <header className="absolute top-0 left-0 right-0 z-30 pt-3 pb-1 text-center pointer-events-none">
+        <h1 className="font-christmas text-3xl md:text-5xl lg:text-6xl text-[#d4af37] drop-shadow-md tracking-wider">
           Merry Christmas
         </h1>
         {name && (
-          <p className="mt-2 text-xl font-christmas text-[#e5e7eb] opacity-90 tracking-wide animate-fade-in-up">
-            Warm wishes for <span className="text-[#ff4d4d] border-b border-[#ff4d4d] pb-0.5">{name}</span>
-          </p>
+          <div className="mt-0.5 text-xs md:text-lg text-white/80 font-christmas">
+            For <span className="text-[#ff5c5c] border-b border-[#ff5c5c]/40 mx-1">{name}</span>
+          </div>
         )}
       </header>
 
-      {/* Main Content Area */}
-      <main className="relative z-20 flex-1 flex flex-col md:flex-row items-center justify-center w-full max-w-7xl mx-auto px-4 pb-8 gap-10 md:gap-20">
+      {/* 4. Main Layout Area */}
+      {/* 
+         Logic:
+         - Mobile: 32% Top (3D), 68% Bottom (Cards). Slight adjustment to give 3D more presence than 30%.
+         - Desktop: 45% Left (Cards), 55% Right (3D).
+      */}
+      <main className="relative z-10 flex-1 w-full h-full flex flex-col lg:flex-row pt-14 pb-6 lg:pt-0 lg:pb-0">
         
-        {/* Left: Card Stack */}
-        <section className="w-full md:w-5/12 flex justify-center items-center h-[520px] md:perspective-1000">
-          {name && (
-            <CardStack 
-              cards={cards} 
-              onNext={handleNextCard} 
-              userName={name} 
-            />
-          )}
+        {/* --- 3D SCENE CONTAINER --- */}
+        <section className="
+           relative w-full 
+           flex-[0_0_32%] lg:flex-[0_0_55%] lg:h-full
+           order-1 lg:order-2
+           flex items-center justify-center
+           overflow-hidden
+        ">
+           <Canvas 
+              // Zoomed in slightly (z=10 instead of 12) to fill the "empty" space
+              camera={{ position: [0, 0, 10], fov: 45 }} 
+              gl={{ alpha: true, antialias: true }} 
+              dpr={[1, 2]}
+            >
+             <ambientLight intensity={0.6} />
+             {/* @ts-ignore */}
+             <pointLight position={[10, 10, 10]} intensity={1.2} color="#ffd700" />
+             {/* @ts-ignore */}
+             <pointLight position={[-10, -5, 5]} intensity={0.8} color="#ff4d4d" />
+             
+             {/* Increased star count to reduce emptiness */}
+             <Stars radius={80} depth={40} count={1500} factor={4} saturation={0} fade speed={0.5} />
+             <ThreeSparkles count={20} scale={5} size={2} speed={0.3} opacity={0.3} color="#fff" />
+             
+             <group position={[0, -0.5, 0]}>
+               <ParticleCloud shapeType={activeShape} />
+             </group>
+             
+             <OrbitControls 
+                enableZoom={false} 
+                autoRotate 
+                autoRotateSpeed={0.8} 
+                enablePan={false} 
+                maxPolarAngle={Math.PI / 1.7} 
+                minPolarAngle={Math.PI / 2.5} 
+             />
+           </Canvas>
         </section>
 
-        {/* Right: 3D Scene */}
-        <section className="w-full md:w-6/12 h-[350px] md:h-[600px] relative transition-all duration-1000 ease-out transform translate-y-0 opacity-100">
-           
-           {/* Glassmorphism Container */}
-           <div className="absolute inset-0 bg-white/5 backdrop-blur-sm rounded-[3rem] border border-white/10 shadow-2xl overflow-hidden ring-1 ring-white/10">
-               <Canvas camera={{ position: [0, 1, 8], fov: 45 }} gl={{ alpha: true }}>
-                 <ambientLight intensity={0.8} />
-                 <pointLight position={[10, 10, 10]} intensity={1.5} color="#ffd700" />
-                 <pointLight position={[-10, -5, 5]} intensity={1} color="#ff0000" />
-                 
-                 <Stars radius={100} depth={50} count={3000} factor={4} saturation={0} fade speed={1} />
-                 <ThreeSparkles count={40} scale={5} size={3} speed={0.5} opacity={0.6} color="#ffffff" />
-                 
-                 {/* The Dynamic Cloud */}
-                 <ParticleCloud shapeType={activeShape} />
-                 
-                 <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={1.0} enablePan={false} maxPolarAngle={Math.PI / 1.5} minPolarAngle={Math.PI / 3} />
-               </Canvas>
-           </div>
-
-           {/* Decorative elements around 3D frame */}
-           <div className="absolute -top-4 -right-4 w-20 h-20 bg-[#d4af37] rounded-full blur-3xl opacity-20 animate-pulse"></div>
-           <div className="absolute -bottom-4 -left-4 w-24 h-24 bg-[#c41e3a] rounded-full blur-3xl opacity-20 animate-pulse"></div>
-           
-           <div className="absolute bottom-6 right-8 text-xs text-[#d4af37]/60 pointer-events-none font-serif tracking-widest uppercase">
-             Interactive 3D Display
-           </div>
+        {/* --- CARDS CONTAINER --- */}
+        <section className="
+            relative w-full
+            flex-1 lg:h-full lg:flex-[0_0_45%]
+            order-2 lg:order-1
+            flex items-center justify-center
+            px-4 pb-2
+        ">
+           {name && (
+             <CardStack 
+                cards={cards} 
+                onNext={handleNextCard} 
+                userName={name} 
+             />
+           )}
         </section>
 
       </main>
 
       {/* Intro Modal */}
       {!name && <IntroModal onComplete={handleNameSubmit} />}
-
-      {/* Music Player */}
-      <MusicPlayer shouldPlay={shouldPlayMusic} />
       
       {/* Footer */}
-      <footer className="absolute bottom-2 w-full text-center text-white/30 text-xs z-20 font-serif">
+      <footer className="absolute bottom-2 w-full text-center text-white/30 text-[10px] sm:text-xs z-40 font-serif">
         Designed with ❤️ for Christmas | © Leo Wang
       </footer>
     </div>

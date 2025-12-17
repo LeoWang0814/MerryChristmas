@@ -2,23 +2,31 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Merry Christmas</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@400;700&family=Noto+Serif+SC:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <style>
-      body {
+      html, body {
         margin: 0;
-        overflow: hidden;
-        background-color: #3a0a0a;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden; /* Force no scroll */
+        background-color: #3a0a0a; /* Uniform deep red */
         font-family: 'Noto Serif SC', serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      #root {
+        width: 100%;
+        height: 100%;
       }
       .font-christmas {
         font-family: 'Mountains of Christmas', cursive;
       }
-      /* Custom scrollbar */
+      /* Custom scrollbar for inside cards */
       .custom-scrollbar::-webkit-scrollbar {
-        width: 4px;
+        width: 3px;
       }
       .custom-scrollbar::-webkit-scrollbar-track {
         background: transparent;
@@ -36,46 +44,48 @@
         width: 100%;
         height: 100%;
         pointer-events: none;
-        z-index: 100;
-        overflow: hidden;
+        z-index: 10;
       }
       .snowflake {
         position: absolute;
         top: -10px;
         background: white;
         border-radius: 50%;
-        opacity: 0.8;
+        opacity: 0.6; /* Softer snow */
         animation: fall linear infinite;
       }
-      /* Generate random snowflakes via CSS nth-child loop simulation (simplified for static CSS) */
-      .snowflake:nth-child(1) { left: 10%; width: 5px; height: 5px; animation-duration: 10s; animation-delay: 0s; }
-      .snowflake:nth-child(2) { left: 20%; width: 3px; height: 3px; animation-duration: 12s; animation-delay: 2s; }
-      .snowflake:nth-child(3) { left: 30%; width: 7px; height: 7px; animation-duration: 8s; animation-delay: 1s; }
-      .snowflake:nth-child(4) { left: 40%; width: 4px; height: 4px; animation-duration: 15s; animation-delay: 0s; }
-      .snowflake:nth-child(5) { left: 50%; width: 6px; height: 6px; animation-duration: 11s; animation-delay: 3s; }
-      .snowflake:nth-child(6) { left: 60%; width: 3px; height: 3px; animation-duration: 13s; animation-delay: 1s; }
-      .snowflake:nth-child(7) { left: 70%; width: 5px; height: 5px; animation-duration: 9s; animation-delay: 2s; }
-      .snowflake:nth-child(8) { left: 80%; width: 4px; height: 4px; animation-duration: 14s; animation-delay: 0s; }
-      .snowflake:nth-child(9) { left: 90%; width: 6px; height: 6px; animation-duration: 10s; animation-delay: 4s; }
-      .snowflake:nth-child(10) { left: 25%; width: 4px; height: 4px; animation-duration: 11s; animation-delay: 5s; }
-      /* ... more flakes implied by repeated classes in React mapping, 
-         but we need randomness. We will rely on inline styles or SCSS, 
-         but for plain CSS here, we add a general rule and some randomness. 
-      */
-      
       @keyframes fall {
-        0% { transform: translateY(-10vh) translateX(0); opacity: 0.8; }
-        100% { transform: translateY(110vh) translateX(20px); opacity: 0.3; }
+        0% { transform: translateY(-10vh) translateX(0); opacity: 0.6; }
+        100% { transform: translateY(110vh) translateX(20px); opacity: 0.2; }
+      }
+
+      /* Orientation Warning */
+      #orientation-warning {
+        display: none;
       }
       
-      /* Applying randomness to elements created in React loop via :nth-child would be tedious in pure CSS 
-         without a preprocessor loop. 
-         We will use a simpler approach: define a few variations and let the React loop reuse them, 
-         or just let them fall uniformly which is okay for MVP, 
-         BUT to make it nice, we'll use a small trick in App.tsx to randomise styles.
-         So here just the keyframes.
-      */
-
+      /* Show warning only on small height devices in landscape (Mobile Landscape) */
+      @media screen and (max-height: 500px) and (orientation: landscape) {
+        #orientation-warning {
+          display: flex;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: #3a0a0a;
+          z-index: 9999;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          color: #d4af37;
+          text-align: center;
+          padding: 20px;
+        }
+        #root {
+          display: none;
+        }
+      }
     </style>
   <script type="importmap">
 {
@@ -92,7 +102,10 @@
 </script>
 </head>
   <body>
+    <div id="orientation-warning">
+      <h2 style="font-family: 'Mountains of Christmas', cursive; font-size: 2rem; margin-bottom: 1rem;">Please Rotate Your Device</h2>
+      <p style="font-family: sans-serif; opacity: 0.8;">Use portrait mode for the best experience.</p>
+    </div>
     <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
   </body>
 </html>
