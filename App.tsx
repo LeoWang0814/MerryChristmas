@@ -133,7 +133,7 @@ function App() {
       
       {/* Footer */}
       <footer className="absolute bottom-2 w-full text-center text-white/30 text-[10px] sm:text-xs z-40 font-serif">
-        Designed with ❤️ for Christmas | © Leo Wang
+        Designed with ❤️ for Christmas | © Leo Wang | <a href="https://github.com/LeoWang0814/MerryChristmas" target="_blank" rel="noopener noreferrer" className="hover:text-white/60 underline decoration-white/20 transition-colors">Github Repository</a>
       </footer>
     </div>
   );
